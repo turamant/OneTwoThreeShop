@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 # Register your models here.
-from listings.models import Size, Category, Sex, Color, Product, Modelka, ImageProduct
+from listings.models import Size, Category, Sex, Color, Product, Modelka, ImageProduct, Review
 
 
 @admin.register(Size)
@@ -41,14 +41,23 @@ class IamgeProductAdmin(admin.ModelAdmin):
 
     get_image.short_description = "Изображение"
 
+
+class OrderReviewInline(admin.TabularInline):
+    model = Review
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'get_image', 'category', 'model', 'sex', 'color', 'size', 'price', 'count')
+    list_display = ('name', 'get_image', 'category', 'model', 'sex', 'color', 'size', 'price', 'count', 'available')
+    list_filter = ('category', 'available')
+    list_editable = ('price', 'available')
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name', 'model')}
     readonly_fields = ("get_image",)
+
+    inlines = [OrderReviewInline]
 
     def get_image(self, obj):
         return mark_safe(f'<img src={obj.poster.url} width="50" height="60"')
 
     get_image.short_description = "Изображение"
+
