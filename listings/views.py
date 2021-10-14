@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
+from cart.forms import CartAddProductForm
 from listings.forms import ReviewForm
 from listings.models import Modelka, Category, Product, Sex, Color, Size, Review
 
@@ -60,12 +61,13 @@ def product_detail(request, category_slug, product_slug):
             category_slug=category_slug, product_slug=product_slug)
     else:
         review_form = ReviewForm()
+        cart_product_form = CartAddProductForm()
 
     return render(
-        request,
-        'product/detail.html',
+        request, 'product/detail.html',
         {
             'product': product,
-            'review_form': review_form
+            'review_form': review_form,
+            'cart_production_form': cart_product_form,
         }
     )
