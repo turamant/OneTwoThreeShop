@@ -1,3 +1,4 @@
+from django.http import HttpRequest, QueryDict, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
@@ -13,15 +14,25 @@ def product_list(request, category_slug=None):
     colors = Color.objects.all()
 
     sizes = Size.objects.all()
+    print("Site: ", HttpRequest.get_port(request))
+    print("Path: ", HttpRequest.get_full_path(request))
+    print(" absolut path: ", HttpRequest.build_absolute_uri(request, location=None))
+    print("///", HttpRequest.is_secure(request))
+    print("Response: ", HttpResponse.content)
 
     if category_slug:
         requested_category = get_object_or_404(Category, slug=category_slug)
         products = Product.objects.filter(category=requested_category)
-        print("yes category")
+        print("yes category", request.headers.get('User-Agent'))
+        #print("Cocie: ", request.get_signed_cookie('name'))
+        if request.user.is_authenticated:
+            print("User")
+        else:
+            print("Not user")
     else:
         requested_category = None
         products = Product.objects.all()
-        print('Not category')
+        print('Not category', request.headers)
     return render(
         request,
         'product/list.html',
